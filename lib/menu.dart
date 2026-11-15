@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:myportofolio_mobile/app_colors.dart';
 
 const double _pagePadding = 16.0;
 const double _sectionSpacing = 16.0;
@@ -16,72 +17,79 @@ class MyHomePage extends StatelessWidget {
   final String kelas = "KKI";
 
   final List<ItemHomepage> items = [
-    ItemHomepage("View Projects", Icons.folder, Colors.blue),
-    ItemHomepage("Add Project", Icons.add_circle, Colors.green),
-    ItemHomepage("View Skills", Icons.code, Colors.purple),
-    ItemHomepage("View Education", Icons.school, Colors.teal),
-    ItemHomepage("Contact Me", Icons.mail, Colors.deepOrange),
-    ItemHomepage("Logout", Icons.logout, Colors.red),
+    ItemHomepage("View Projects", Icons.folder, AppColors.blue),
+    ItemHomepage("Add Project", Icons.add_circle, AppColors.accent),
+    ItemHomepage("View Skills", Icons.code, AppColors.purple),
+    ItemHomepage("View Education", Icons.school, AppColors.green),
+    ItemHomepage("Contact Me", Icons.mail, AppColors.orange),
+    ItemHomepage("Logout", Icons.logout, AppColors.danger),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'MyPortfolio',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      appBar: AppBar(title: const Text('MyPortfolio')),
+      body: DecoratedBox(
+        decoration: const BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment.topCenter,
+            radius: 1.5,
+            colors: [AppColors.accentGlow, Colors.transparent],
+            stops: [0.0, 0.35],
+          ),
         ),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(_pagePadding),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: _maxContentWidth),
-            child: Column(
-              children: [
-                IntrinsicHeight(
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: InfoCard(title: 'NPM', content: npm),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: InfoCard(title: 'Name', content: nama),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: InfoCard(title: 'Class', content: kelas),
-                      ),
-                    ],
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(_pagePadding),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: _maxContentWidth),
+              child: Column(
+                children: [
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: InfoCard(title: 'NPM', content: npm),
+                        ),
+                        Expanded(
+                          flex: 3,
+                          child: InfoCard(title: 'Name', content: nama),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: InfoCard(title: 'Class', content: kelas),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
 
-                const SizedBox(height: _sectionSpacing * 2),
+                  const SizedBox(height: _sectionSpacing * 2),
 
-                const Text(
-                  'Welcome to MyPortfolio Mobile!',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
-                ),
+                  const Text(
+                    'Welcome to MyPortfolio Mobile!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0,
+                    ),
+                  ),
 
-                const SizedBox(height: _sectionSpacing),
+                  const SizedBox(height: _sectionSpacing),
 
-                GridView.count(
-                  crossAxisCount: _gridColumns,
-                  crossAxisSpacing: _gridSpacing,
-                  mainAxisSpacing: _gridSpacing,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: items.map((ItemHomepage item) {
-                    return ItemCard(item);
-                  }).toList(),
-                ),
-              ],
+                  GridView.count(
+                    crossAxisCount: _gridColumns,
+                    crossAxisSpacing: _gridSpacing,
+                    mainAxisSpacing: _gridSpacing,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: items.map((ItemHomepage item) {
+                      return ItemCard(item);
+                    }).toList(),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -100,15 +108,26 @@ class InfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 2.0,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              title.toUpperCase(),
+              style: const TextStyle(
+                color: AppColors.accent,
+                fontSize: 12.0,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1.4,
+              ),
+            ),
             const SizedBox(height: 8.0),
-            Text(content, textAlign: TextAlign.center),
+            Text(
+              content,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
           ],
         ),
       ),
@@ -132,6 +151,10 @@ class ItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final borderRadius = BorderRadius.circular(_cardRadius);
+    final foreground =
+        ThemeData.estimateBrightnessForColor(item.color) == Brightness.dark
+        ? AppColors.ink
+        : AppColors.paperDark;
 
     return Material(
       color: item.color,
@@ -150,7 +173,7 @@ class ItemCard extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(item.icon, color: Colors.white, size: _itemIconSize),
+              Icon(item.icon, color: foreground, size: _itemIconSize),
               const SizedBox(height: 6),
               Flexible(
                 child: Text(
@@ -158,8 +181,8 @@ class ItemCard extends StatelessWidget {
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: foreground,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
