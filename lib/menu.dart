@@ -8,9 +8,9 @@ class MyHomePage extends StatelessWidget {
   final String kelas = "KKI";
 
   final List<ItemHomepage> items = [
-    ItemHomepage("View Projects", Icons.folder),
-    ItemHomepage("Add Project", Icons.add_circle),
-    ItemHomepage("Logout", Icons.logout),
+    ItemHomepage("View Projects", Icons.folder, Colors.blue),
+    ItemHomepage("Add Project", Icons.add_circle, Colors.green),
+    ItemHomepage("Logout", Icons.logout, Colors.red),
   ];
 
   @override
@@ -114,8 +114,9 @@ class InfoCard extends StatelessWidget {
 class ItemHomepage {
   final String name;
   final IconData icon;
+  final Color color;
 
-  ItemHomepage(this.name, this.icon);
+  ItemHomepage(this.name, this.icon, this.color);
 }
 
 class ItemCard extends StatelessWidget {
@@ -125,10 +126,13 @@ class ItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final borderRadius = BorderRadius.circular(12);
+
     return Material(
-      color: Theme.of(context).colorScheme.secondary,
-      borderRadius: BorderRadius.circular(12),
+      color: item.color,
+      borderRadius: borderRadius,
       child: InkWell(
+        borderRadius: borderRadius,
         onTap: () {
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
