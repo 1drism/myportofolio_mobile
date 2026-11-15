@@ -9,6 +9,7 @@ const int _gridColumns = 3;
 const double _cardRadius = 12.0;
 const double _itemIconSize = 30.0;
 
+/// Home screen showing the owner's identity and the portfolio action menu.
 class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});
 
@@ -98,8 +99,8 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
+/// Card showing one piece of owner information, e.g. NPM or name.
 class InfoCard extends StatelessWidget {
-  // Information card displaying a title and its associated content.
   final String title;
   final String content;
 
@@ -135,6 +136,7 @@ class InfoCard extends StatelessWidget {
   }
 }
 
+/// Data for one action button: its label, icon, and background color.
 class ItemHomepage {
   final String name;
   final IconData icon;
@@ -143,6 +145,7 @@ class ItemHomepage {
   ItemHomepage(this.name, this.icon, this.color);
 }
 
+/// Colored action button that shows a SnackBar with its name when tapped.
 class ItemCard extends StatelessWidget {
   final ItemHomepage item;
 

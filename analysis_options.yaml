@@ -10,6 +10,10 @@
 include: package:flutter_lints/flutter.yaml
 
 analyzer:
+  errors:
+    # Flutter 3.47+ deprecates package:flutter/material.dart in favor of
+    # package:material_ui; the course still uses the built-in import.
+    deprecated_member_use: ignore
   exclude:
     - build/**
     - android/**
