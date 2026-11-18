@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/app_colors.dart';
+import 'package:myportofolio_mobile/project_form.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 
 const double _pagePadding = 16.0;
@@ -172,6 +173,14 @@ class ItemCard extends StatelessWidget {
             ..showSnackBar(
               SnackBar(content: Text("You pressed the ${item.name} button!")),
             );
+
+          // Navigate to the appropriate screen
+          if (item.name == "Add Project") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProjectFormPage()),
+            );
+          }
         },
         child: Padding(
           padding: const EdgeInsets.all(8),

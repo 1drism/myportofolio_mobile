@@ -45,13 +45,13 @@ void main() {
   ) async {
     await tester.pumpWidget(const MyApp());
 
-    await tester.tap(find.text('Add Project'));
+    await tester.tap(find.text('View Projects'));
     await tester.pump();
     await tester.tap(find.text('Logout'));
     await tester.pumpAndSettle();
 
     expect(find.byType(SnackBar), findsOneWidget);
     expect(find.text('You pressed the Logout button!'), findsOneWidget);
-    expect(find.text('You pressed the Add Project button!'), findsNothing);
+    expect(find.text('You pressed the View Projects button!'), findsNothing);
   });
 }
