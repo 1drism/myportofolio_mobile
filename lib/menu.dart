@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/app_colors.dart';
+import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 
 const double _pagePadding = 16.0;
 const double _sectionSpacing = 16.0;
@@ -30,6 +31,7 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('MyPortfolio')),
+      drawer: const LeftDrawer(),
       body: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: RadialGradient(
