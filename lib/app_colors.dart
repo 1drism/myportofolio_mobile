@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Palette shared with the MyPortfolio Django site (`static/css/tokens.css`).
 class AppColors {
