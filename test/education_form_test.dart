@@ -149,6 +149,62 @@ void main() {
     });
   });
 
+  group('editing after a failed Save', () {
+    testWidgets('errors clear as each field is fixed', (tester) async {
+      await _pumpApp(tester);
+      await _openFromCard(tester);
+      await _save(tester);
+
+      await tester.enterText(_textField(0), 'Universitas Indonesia');
+      await tester.pump();
+      expect(find.text('Institution is required.'), findsNothing);
+      expect(find.text('Degree is required.'), findsOneWidget);
+
+      await _pickDay(tester, 0, '15');
+      expect(find.text('Start date is required.'), findsNothing);
+    });
+
+    testWidgets('no errors appear while typing before the first Save', (
+      tester,
+    ) async {
+      await _pumpApp(tester);
+      await _openFromCard(tester);
+
+      await tester.enterText(_textField(0), '   ');
+      await tester.pump();
+      expect(find.text('Institution is required.'), findsNothing);
+    });
+
+    testWidgets('changing the start date re-checks the end date', (
+      tester,
+    ) async {
+      await _pumpApp(tester);
+      await _openFromCard(tester);
+      await _pickDay(tester, 0, '15');
+      await _pickDay(tester, 1, '10');
+      await _save(tester);
+      expect(
+        find.text('End date cannot be before start date.'),
+        findsOneWidget,
+      );
+
+      await _pickDay(tester, 0, '5');
+      expect(find.text('End date cannot be before start date.'), findsNothing);
+    });
+
+    testWidgets('keyboard stays closed after picking a date', (tester) async {
+      await _pumpApp(tester);
+      await _openFromCard(tester);
+
+      await tester.showKeyboard(_textField(0));
+      expect(tester.testTextInput.isVisible, isTrue);
+
+      await _pickDay(tester, 0, '15');
+      expect(find.byType(DatePickerDialog), findsNothing);
+      expect(tester.testTextInput.isVisible, isFalse);
+    });
+  });
+
   group('summary dialog', () {
     testWidgets('valid Save shows every value and OK returns to the form', (
       tester,

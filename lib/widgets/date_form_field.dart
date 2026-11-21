@@ -21,6 +21,7 @@ class DateFormField extends FormField<DateTime> {
            }
 
            Future<void> pick() async {
+             FocusManager.instance.primaryFocus?.unfocus();
              final today = DateUtils.dateOnly(DateTime.now());
              final picked = await showDatePicker(
                context: field.context,

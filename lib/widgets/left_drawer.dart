@@ -1,7 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/app_colors.dart';
 import 'package:myportofolio_mobile/screens/education_form.dart';
-import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
 
 /// Pages reachable from [LeftDrawer].
@@ -15,8 +14,9 @@ enum DrawerDestination {
   final String label;
   final IconData icon;
 
-  Widget buildPage() => switch (this) {
-    home => MyHomePage(),
+  /// Page to open; null for Home, which pops back to the root instead.
+  Widget? get page => switch (this) {
+    home => null,
     addProject => const ProjectFormPage(),
     addEducation => const EducationFormPage(),
   };
@@ -36,13 +36,12 @@ class LeftDrawer extends StatelessWidget {
       navigator.pop();
       return;
     }
-    if (destination == DrawerDestination.home) {
+    final page = destination.page;
+    if (page == null) {
       navigator.popUntil((route) => route.isFirst);
       return;
     }
-    final route = MaterialPageRoute<void>(
-      builder: (_) => destination.buildPage(),
-    );
+    final route = MaterialPageRoute<void>(builder: (_) => page);
     if (current == DrawerDestination.home) {
       navigator
         ..pop()

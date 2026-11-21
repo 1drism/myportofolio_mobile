@@ -72,6 +72,7 @@ class _EducationFormPageState extends State<EducationFormPage> {
       body: SafeArea(
         child: Form(
           key: _formKey,
+          autovalidateMode: AutovalidateMode.onUserInteractionIfError,
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(_pagePadding),
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
