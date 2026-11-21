@@ -1,7 +1,9 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:myportofolio_mobile/app_colors.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
 
+/// Navigation drawer shared by every page.
 class LeftDrawer extends StatelessWidget {
   const LeftDrawer({super.key});
 
@@ -10,9 +12,14 @@ class LeftDrawer extends StatelessWidget {
     return Drawer(
       child: ListView(
         children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(color: Colors.indigo),
-            child: Column(
+          Container(
+            margin: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+            decoration: const BoxDecoration(
+              color: AppColors.paper,
+              border: Border(bottom: BorderSide(color: AppColors.accent)),
+            ),
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -20,13 +27,13 @@ class LeftDrawer extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: AppColors.accent,
                   ),
                 ),
                 SizedBox(height: 10),
                 Text(
                   'Explore personal projects and experiences!',
-                  style: TextStyle(fontSize: 15, color: Colors.white),
+                  style: TextStyle(fontSize: 15, color: AppColors.textMuted),
                 ),
               ],
             ),
