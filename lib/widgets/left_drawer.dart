@@ -1,11 +1,56 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/app_colors.dart';
+import 'package:myportofolio_mobile/screens/education_form.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
 
-/// Navigation drawer shared by every page.
+/// Pages reachable from [LeftDrawer].
+enum DrawerDestination {
+  home('Home', Icons.home_outlined),
+  addProject('Add Project', Icons.add_circle_outline),
+  addEducation('Add Education', Icons.history_edu_outlined);
+
+  const DrawerDestination(this.label, this.icon);
+
+  final String label;
+  final IconData icon;
+
+  Widget buildPage() => switch (this) {
+    home => MyHomePage(),
+    addProject => const ProjectFormPage(),
+    addEducation => const EducationFormPage(),
+  };
+}
+
+/// Navigation drawer shared by every page; [current] is highlighted.
 class LeftDrawer extends StatelessWidget {
-  const LeftDrawer({super.key});
+  final DrawerDestination current;
+
+  const LeftDrawer({super.key, required this.current});
+
+  /// Home pops back to the root page; forms are pushed from Home and
+  /// replace each other elsewhere, so Back always leads to Home.
+  void _open(BuildContext context, DrawerDestination destination) {
+    final navigator = Navigator.of(context);
+    if (destination == current) {
+      navigator.pop();
+      return;
+    }
+    if (destination == DrawerDestination.home) {
+      navigator.popUntil((route) => route.isFirst);
+      return;
+    }
+    final route = MaterialPageRoute<void>(
+      builder: (_) => destination.buildPage(),
+    );
+    if (current == DrawerDestination.home) {
+      navigator
+        ..pop()
+        ..push(route);
+    } else {
+      navigator.pushReplacement(route);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,30 +83,13 @@ class LeftDrawer extends StatelessWidget {
               ],
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.home_outlined),
-            title: const Text('Home'),
-            // Navigate to the portfolio home screen
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => MyHomePage()),
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.add_circle_outline),
-            title: const Text('Add Project'),
-            // Navigate to the Add Project screen
-            onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ProjectFormPage(),
-                ),
-              );
-            },
-          ),
+          for (final destination in DrawerDestination.values)
+            ListTile(
+              leading: Icon(destination.icon),
+              title: Text(destination.label),
+              selected: destination == current,
+              onTap: () => _open(context, destination),
+            ),
         ],
       ),
     );

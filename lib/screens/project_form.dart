@@ -30,7 +30,7 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Center(child: Text('Add Project Form'))),
-      drawer: const LeftDrawer(),
+      drawer: const LeftDrawer(current: DrawerDestination.addProject),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(

@@ -68,7 +68,7 @@ class _EducationFormPageState extends State<EducationFormPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Add Education')),
-      drawer: const LeftDrawer(),
+      drawer: const LeftDrawer(current: DrawerDestination.addEducation),
       body: SafeArea(
         child: Form(
           key: _formKey,

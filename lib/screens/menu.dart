@@ -43,7 +43,7 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('MyPortfolio')),
-      drawer: const LeftDrawer(),
+      drawer: const LeftDrawer(current: DrawerDestination.home),
       body: DecoratedBox(
         decoration: const BoxDecoration(
           gradient: RadialGradient(
