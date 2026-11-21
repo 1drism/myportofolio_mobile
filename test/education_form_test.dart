@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/main.dart';
 import 'package:myportofolio_mobile/screens/education_form.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
+import 'package:myportofolio_mobile/widgets/date_form_field.dart';
 
 const _phone = Size(360, 640);
 const _desktop = Size(1280, 800);
@@ -206,7 +207,7 @@ void main() {
   });
 
   group('summary dialog', () {
-    testWidgets('valid Save shows every value and OK returns to the form', (
+    testWidgets('valid Save shows every value and OK resets the form', (
       tester,
     ) async {
       await _pumpApp(tester);
@@ -215,7 +216,7 @@ void main() {
       await tester.enterText(_textField(0), '  Universitas Indonesia  ');
       await tester.enterText(_textField(1), 'Computer Science');
       await tester.enterText(_textField(2), 'Bachelor');
-      await _pickDay(tester, 0, '1');
+      await _pickDay(tester, 0, '15');
       await tester.enterText(_textField(3), 'Fasilkom UI student');
       await _save(tester);
 
@@ -242,6 +243,23 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(AlertDialog), findsNothing);
       expect(find.byType(EducationFormPage), findsOneWidget);
+
+      final texts = tester.widgetList<EditableText>(find.byType(EditableText));
+      expect(
+        texts.map((field) => field.controller.text),
+        everyElement(isEmpty),
+      );
+      final dates = tester.stateList<FormFieldState<DateTime>>(
+        find.byType(DateFormField),
+      );
+      expect(dates.map((field) => field.value), everyElement(isNull));
+      expect(find.text('Institution is required.'), findsNothing);
+
+      // The old start date must not be used to check a new end date.
+      await _pickDay(tester, 1, '10');
+      await _save(tester);
+      expect(find.text('Start date is required.'), findsOneWidget);
+      expect(find.text('End date cannot be before start date.'), findsNothing);
     });
   });
 

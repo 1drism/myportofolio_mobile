@@ -28,7 +28,8 @@ class _EducationFormPageState extends State<EducationFormPage> {
   DateTime? _endedAt;
   String _description = '';
 
-  /// Validates every field, then shows the saved entry in a dialog.
+  /// Validates every field, shows the saved entry in a dialog, then clears
+  /// the form for the next entry.
   Future<void> _save() async {
     final form = _formKey.currentState!;
     if (!form.validate()) return;
@@ -46,6 +47,8 @@ class _EducationFormPageState extends State<EducationFormPage> {
       context: context,
       builder: (context) => _EducationSummaryDialog(education),
     );
+    _formKey.currentState?.reset();
+    _startedAt = null;
   }
 
   Widget _textField({
