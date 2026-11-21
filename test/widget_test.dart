@@ -22,6 +22,7 @@ void main() {
       'Add Project',
       'View Skills',
       'View Education',
+      'Add Education',
       'Contact Me',
       'Logout',
     ]) {
@@ -47,6 +48,7 @@ void main() {
 
     await tester.tap(find.text('View Projects'));
     await tester.pump();
+    await tester.ensureVisible(find.text('Logout'));
     await tester.tap(find.text('Logout'));
     await tester.pumpAndSettle();
 

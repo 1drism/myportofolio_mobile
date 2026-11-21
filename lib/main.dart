@@ -12,9 +12,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(8);
     final cardShape = RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: radius,
       side: const BorderSide(color: AppColors.divider),
+    );
+    OutlineInputBorder inputBorder(Color color) => OutlineInputBorder(
+      borderRadius: radius,
+      borderSide: BorderSide(color: color),
     );
 
     return MaterialApp(
@@ -30,7 +35,7 @@ class MyApp extends StatelessWidget {
           surface: AppColors.paperDark,
           onSurface: AppColors.ink,
           onSurfaceVariant: AppColors.textMuted,
-          error: AppColors.danger,
+          error: AppColors.dangerLight,
         ),
         appBarTheme: const AppBarTheme(
           backgroundColor: AppColors.paperDark,
@@ -45,6 +50,42 @@ class MyApp extends StatelessWidget {
           color: AppColors.paperDark,
           elevation: 0,
           shape: cardShape,
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: AppColors.paperDark,
+          labelStyle: const TextStyle(color: AppColors.textMuted),
+          hintStyle: const TextStyle(color: AppColors.textMuted),
+          border: inputBorder(AppColors.divider),
+          enabledBorder: inputBorder(AppColors.divider),
+          focusedBorder: inputBorder(AppColors.accent),
+          errorBorder: inputBorder(AppColors.dangerLight),
+          focusedErrorBorder: inputBorder(AppColors.dangerLight),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.accent,
+            foregroundColor: AppColors.paperDark,
+            minimumSize: const Size(120, 48),
+            textStyle: const TextStyle(fontWeight: FontWeight.bold),
+            shape: RoundedRectangleBorder(borderRadius: radius),
+          ),
+        ),
+        dialogTheme: DialogThemeData(
+          backgroundColor: AppColors.paperDark,
+          shape: RoundedRectangleBorder(
+            borderRadius: radius,
+            side: const BorderSide(color: AppColors.divider),
+          ),
+        ),
+        drawerTheme: const DrawerThemeData(
+          backgroundColor: AppColors.paperDark,
+        ),
+        listTileTheme: const ListTileThemeData(
+          iconColor: AppColors.textMuted,
+          textColor: AppColors.ink,
+          selectedColor: AppColors.accent,
+          selectedTileColor: AppColors.accentGlow,
         ),
         snackBarTheme: SnackBarThemeData(
           backgroundColor: AppColors.paperDark,

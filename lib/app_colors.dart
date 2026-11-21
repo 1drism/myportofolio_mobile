@@ -12,9 +12,11 @@ class AppColors {
   static const Color accentGlow = Color(0x1FB09404);
   static const Color divider = Color(0x17FBFBFB);
   static const Color danger = Color(0xFFB42318);
+  static const Color dangerLight = Color(0xFFE0695E);
 
   static const Color blue = Color(0xFF3776AB);
   static const Color green = Color(0xFF44B78B);
   static const Color purple = Color(0xFFA259FF);
   static const Color orange = Color(0xFFE76F00);
+  static const Color cyan = Color(0xFF1ABCFE);
 }

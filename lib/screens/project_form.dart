@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 
+/// Tutorial 09 form for adding a portfolio project.
 class ProjectFormPage extends StatefulWidget {
   const ProjectFormPage({super.key});
 
@@ -28,12 +29,8 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Center(child: Text('Add Project Form')),
-        backgroundColor: Colors.indigo,
-        foregroundColor: Colors.white,
-      ),
-      drawer: const LeftDrawer(),
+      appBar: AppBar(title: const Center(child: Text('Add Project Form'))),
+      drawer: const LeftDrawer(current: DrawerDestination.addProject),
       body: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -47,9 +44,6 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
                   decoration: InputDecoration(
                     hintText: "Project Name",
                     labelText: "Project Name",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
                   ),
                   onChanged: (String? value) {
                     setState(() {
@@ -73,9 +67,6 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
                   decoration: InputDecoration(
                     hintText: "Project Description",
                     labelText: "Project Description",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
                   ),
                   onChanged: (String? value) {
                     setState(() {
@@ -95,12 +86,8 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    labelText: "Project Category",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
+                  isExpanded: true,
+                  decoration: InputDecoration(labelText: "Project Category"),
                   initialValue: _category,
                   items: _categories
                       .map(
@@ -125,9 +112,6 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
                   decoration: InputDecoration(
                     hintText: "Example: Flutter, Django, Figma",
                     labelText: "Technologies Used",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
                   ),
                   onChanged: (String? value) {
                     setState(() {
@@ -144,9 +128,6 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
                   decoration: InputDecoration(
                     hintText: "Project URL (optional)",
                     labelText: "Project Link",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
                   ),
                   onChanged: (String? value) {
                     setState(() {
@@ -162,9 +143,6 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStateProperty.all(Colors.indigo),
-                    ),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         showDialog(
@@ -198,10 +176,7 @@ class _ProjectFormPageState extends State<ProjectFormPage> {
                         );
                       }
                     },
-                    child: const Text(
-                      "Save",
-                      style: TextStyle(color: Colors.white),
-                    ),
+                    child: const Text("Save"),
                   ),
                 ),
               ),
