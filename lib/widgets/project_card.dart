@@ -1,12 +1,11 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/app_colors.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
-import 'package:myportofolio_mobile/screens/project_form.dart';
 
 const double _cardRadius = 12.0;
 const double _itemIconSize = 30.0;
 
-/// Colored action button that shows a SnackBar with its name when tapped.
+/// Colored action button that opens its page or shows a SnackBar when tapped.
 class ItemCard extends StatelessWidget {
   final ItemHomepage item;
 
@@ -26,19 +25,16 @@ class ItemCard extends StatelessWidget {
       child: InkWell(
         borderRadius: borderRadius,
         onTap: () {
+          final page = item.page;
+          if (page != null) {
+            Navigator.push(context, MaterialPageRoute(builder: page));
+            return;
+          }
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(content: Text("You pressed the ${item.name} button!")),
             );
-
-          // Navigate to the appropriate screen
-          if (item.name == "Add Project") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const ProjectFormPage()),
-            );
-          }
         },
         child: Padding(
           padding: const EdgeInsets.all(8),

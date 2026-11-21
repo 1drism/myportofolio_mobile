@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/app_colors.dart';
+import 'package:myportofolio_mobile/screens/education_form.dart';
+import 'package:myportofolio_mobile/screens/project_form.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 import 'package:myportofolio_mobile/widgets/project_card.dart';
 
@@ -19,9 +21,20 @@ class MyHomePage extends StatelessWidget {
 
   final List<ItemHomepage> items = [
     ItemHomepage("View Projects", Icons.folder, AppColors.blue),
-    ItemHomepage("Add Project", Icons.add_circle, AppColors.accent),
+    ItemHomepage(
+      "Add Project",
+      Icons.add_circle,
+      AppColors.accent,
+      page: (_) => const ProjectFormPage(),
+    ),
     ItemHomepage("View Skills", Icons.code, AppColors.purple),
     ItemHomepage("View Education", Icons.school, AppColors.green),
+    ItemHomepage(
+      "Add Education",
+      Icons.history_edu,
+      AppColors.cyan,
+      page: (_) => const EducationFormPage(),
+    ),
     ItemHomepage("Contact Me", Icons.mail, AppColors.orange),
     ItemHomepage("Logout", Icons.logout, AppColors.danger),
   ];
@@ -137,11 +150,14 @@ class InfoCard extends StatelessWidget {
   }
 }
 
-/// Data for one action button: its label, icon, and background color.
+/// Data for one action button: its label, icon, color, and optional page.
 class ItemHomepage {
   final String name;
   final IconData icon;
   final Color color;
 
-  ItemHomepage(this.name, this.icon, this.color);
+  /// Page opened with [Navigator.push]; null shows a SnackBar instead.
+  final WidgetBuilder? page;
+
+  ItemHomepage(this.name, this.icon, this.color, {this.page});
 }
