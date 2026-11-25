@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/app_colors.dart';
 import 'package:myportofolio_mobile/screens/education_form.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
+import 'package:myportofolio_mobile/screens/project_list_screen.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 import 'package:myportofolio_mobile/widgets/project_card.dart';
 
@@ -20,7 +21,12 @@ class MyHomePage extends StatelessWidget {
   final String kelas = "KKI";
 
   final List<ItemHomepage> items = [
-    ItemHomepage("View Projects", Icons.folder, AppColors.blue),
+    ItemHomepage(
+      "View Projects",
+      Icons.folder,
+      AppColors.blue,
+      page: (_) => const ProjectListScreen(),
+    ),
     ItemHomepage(
       "Add Project",
       Icons.add_circle,

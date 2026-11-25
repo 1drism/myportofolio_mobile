@@ -2,10 +2,12 @@ import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/app_colors.dart';
 import 'package:myportofolio_mobile/screens/education_form.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
+import 'package:myportofolio_mobile/screens/project_list_screen.dart';
 
 /// Pages reachable from [LeftDrawer].
 enum DrawerDestination {
   home('Home', Icons.home_outlined),
+  viewProjects('View Projects', Icons.folder_outlined),
   addProject('Add Project', Icons.add_circle_outline),
   addEducation('Add Education', Icons.history_edu_outlined);
 
@@ -17,6 +19,7 @@ enum DrawerDestination {
   /// Page to open; null for Home, which pops back to the root instead.
   Widget? get page => switch (this) {
     home => null,
+    viewProjects => const ProjectListScreen(),
     addProject => const ProjectFormPage(),
     addEducation => const EducationFormPage(),
   };
@@ -28,7 +31,7 @@ class LeftDrawer extends StatelessWidget {
 
   const LeftDrawer({super.key, required this.current});
 
-  /// Home pops back to the root page; forms are pushed from Home and
+  /// Home pops back to the root page; other pages are pushed from Home and
   /// replace each other elsewhere, so Back always leads to Home.
   void _open(BuildContext context, DrawerDestination destination) {
     final navigator = Navigator.of(context);
