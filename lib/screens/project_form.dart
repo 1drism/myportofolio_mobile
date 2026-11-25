@@ -1,7 +1,36 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:myportofolio_mobile/models/project.dart';
+import 'package:myportofolio_mobile/services/api_client.dart';
+import 'package:myportofolio_mobile/services/auth_state.dart';
+import 'package:myportofolio_mobile/widgets/auth_guard.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
+import 'package:provider/provider.dart';
 
-/// Tutorial 09 form for adding a portfolio project.
+const double _pagePadding = 16.0;
+const double _fieldSpacing = 16.0;
+const int _maxTextLength = 255;
+
+String? _validateRequired(String? value, String label) {
+  final text = value?.trim() ?? '';
+  if (text.isEmpty) return '$label cannot be empty!';
+  if (text.length > _maxTextLength) {
+    return '$label must be at most $_maxTextLength characters.';
+  }
+  return null;
+}
+
+String? _validateUrl(String? value, {required bool required}) {
+  final text = value?.trim() ?? '';
+  if (text.isEmpty) return required ? 'Project URL cannot be empty!' : null;
+  final uri = Uri.tryParse(text);
+  final valid =
+      uri != null &&
+      (uri.scheme == 'http' || uri.scheme == 'https') &&
+      uri.host.isNotEmpty;
+  return valid ? null : 'Enter a valid URL (http:// or https://).';
+}
+
+/// Form that creates a project through the authenticated REST API.
 class ProjectFormPage extends StatefulWidget {
   const ProjectFormPage({super.key});
 
@@ -12,178 +41,170 @@ class ProjectFormPage extends StatefulWidget {
 class _ProjectFormPageState extends State<ProjectFormPage> {
   final _formKey = GlobalKey<FormState>();
 
-  String _projectName = "";
-  String _description = "";
-  String _category = "Web Development"; // default
-  String _technologies = "";
-  String _projectLink = "";
+  String _title = '';
+  String _description = '';
+  String _techStack = '';
+  String _projectUrl = '';
+  String _projectImageUrl = '';
+  bool _isSubmitting = false;
 
-  final List<String> _categories = [
-    'Web Development',
-    'Mobile Development',
-    'Machine Learning',
-    'Data Science',
-    'Other',
-  ];
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _submit() async {
+    final form = _formKey.currentState!;
+    if (!form.validate()) return;
+    form.save();
+
+    if (!await ensureLoggedIn(context)) return;
+    if (!mounted) return;
+
+    final auth = context.read<AuthState>();
+    final project = Project(
+      title: _title,
+      description: _description,
+      techStack: _techStack,
+      projectUrl: _projectUrl,
+      projectImageUrl: _projectImageUrl,
+    );
+
+    setState(() {
+      _isSubmitting = true;
+    });
+    var sessionExpired = false;
+    try {
+      await context.read<ApiClient>().createProject(
+        project,
+        token: auth.token!,
+      );
+      if (!mounted) return;
+      await showDialog<void>(
+        context: context,
+        builder: (_) => _ProjectAddedDialog(project),
+      );
+      _formKey.currentState?.reset();
+      _title = _description = _techStack = _projectUrl = _projectImageUrl = '';
+    } on ApiException catch (e) {
+      if (e.statusCode == 401) {
+        sessionExpired = true;
+      } else if (mounted) {
+        _showSnackBar('Failed to add project (${e.statusCode}).');
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSubmitting = false;
+        });
+      }
+    }
+
+    if (!sessionExpired) return;
+    await auth.logout();
+    if (!mounted) return;
+    _showSnackBar('Your session has expired. Please log in again.');
+    if (await ensureLoggedIn(context) && mounted) {
+      await _submit();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Center(child: Text('Add Project Form'))),
+      appBar: AppBar(title: const Text('Add Project')),
       drawer: const LeftDrawer(current: DrawerDestination.addProject),
       body: Form(
         key: _formKey,
+        autovalidateMode: AutovalidateMode.onUserInteractionIfError,
         child: SingleChildScrollView(
+          padding: const EdgeInsets.all(_pagePadding),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // === Project Name ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    hintText: "Project Name",
-                    labelText: "Project Name",
-                  ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _projectName = value!;
-                    });
-                  },
-                  validator: (String? value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return "Enter a project name.";
-                    }
-                    return null;
-                  },
-                ),
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'Title'),
+                validator: (value) => _validateRequired(value, 'Title'),
+                onSaved: (value) => _title = value!.trim(),
               ),
-
-              // === Description ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  maxLines: 5,
-                  decoration: InputDecoration(
-                    hintText: "Project Description",
-                    labelText: "Project Description",
-                  ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _description = value!;
-                    });
-                  },
-                  validator: (String? value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return "Enter a project description.";
-                    }
-                    return null;
-                  },
+              const SizedBox(height: _fieldSpacing),
+              TextFormField(
+                maxLines: 5,
+                decoration: const InputDecoration(
+                  labelText: 'Description',
+                  alignLabelWithHint: true,
                 ),
+                validator: (value) {
+                  final text = value?.trim() ?? '';
+                  return text.isEmpty ? 'Description cannot be empty!' : null;
+                },
+                onSaved: (value) => _description = value!.trim(),
               ),
-
-              // === Category ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: DropdownButtonFormField<String>(
-                  isExpanded: true,
-                  decoration: InputDecoration(labelText: "Project Category"),
-                  initialValue: _category,
-                  items: _categories
-                      .map(
-                        (category) => DropdownMenuItem(
-                          value: category,
-                          child: Text(category),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _category = newValue!;
-                    });
-                  },
+              const SizedBox(height: _fieldSpacing),
+              TextFormField(
+                decoration: const InputDecoration(labelText: 'Tech Stack'),
+                validator: (value) => _validateRequired(value, 'Tech Stack'),
+                onSaved: (value) => _techStack = value!.trim(),
+              ),
+              const SizedBox(height: _fieldSpacing),
+              TextFormField(
+                keyboardType: TextInputType.url,
+                decoration: const InputDecoration(labelText: 'Project URL'),
+                validator: (value) => _validateUrl(value, required: true),
+                onSaved: (value) => _projectUrl = value!.trim(),
+              ),
+              const SizedBox(height: _fieldSpacing),
+              TextFormField(
+                keyboardType: TextInputType.url,
+                decoration: const InputDecoration(
+                  labelText: 'Project Image URL (optional)',
                 ),
+                validator: (value) => _validateUrl(value, required: false),
+                onSaved: (value) => _projectImageUrl = value!.trim(),
               ),
-
-              // === Technologies ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    hintText: "Example: Flutter, Django, Figma",
-                    labelText: "Technologies Used",
-                  ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _technologies = value!;
-                    });
-                  },
-                ),
-              ),
-
-              // === Project Link ===
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFormField(
-                  decoration: InputDecoration(
-                    hintText: "Project URL (optional)",
-                    labelText: "Project Link",
-                  ),
-                  onChanged: (String? value) {
-                    setState(() {
-                      _projectLink = value!;
-                    });
-                  },
-                ),
-              ),
-
-              // === Save Button ===
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: const Text('Project added successfully!'),
-                              content: SingleChildScrollView(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text('Project Name: $_projectName'),
-                                    Text('Description: $_description'),
-                                    Text('Category: $_category'),
-                                    Text('Technologies: $_technologies'),
-                                    Text('Link: $_projectLink'),
-                                  ],
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  child: const Text('OK'),
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                    _formKey.currentState!.reset();
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      }
-                    },
-                    child: const Text("Save"),
-                  ),
+              const SizedBox(height: _fieldSpacing),
+              Center(
+                child: ElevatedButton(
+                  onPressed: _isSubmitting ? null : _submit,
+                  child: const Text('Save'),
                 ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _ProjectAddedDialog extends StatelessWidget {
+  const _ProjectAddedDialog(this.project);
+
+  final Project project;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Project added successfully!'),
+      content: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 8,
+          children: [
+            Text('Title: ${project.title}'),
+            Text('Description: ${project.description}'),
+            Text('Tech stack: ${project.techStack}'),
+            Text('Project URL: ${project.projectUrl}'),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('OK'),
+        ),
+      ],
     );
   }
 }

@@ -1,9 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:myportofolio_mobile/main.dart';
 import 'package:myportofolio_mobile/screens/education_form.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/widgets/date_form_field.dart';
+
+import 'test_helpers.dart';
 
 const _phone = Size(360, 640);
 const _desktop = Size(1280, 800);
@@ -18,7 +19,7 @@ Future<void> _pumpApp(
   tester.view.devicePixelRatio = 1;
   tester.view.viewInsets = FakeViewPadding(bottom: keyboard);
   addTearDown(tester.view.reset);
-  await tester.pumpWidget(const MyApp());
+  await tester.pumpWidget(testApp());
 }
 
 Future<void> _tapVisible(WidgetTester tester, Finder finder) async {
@@ -97,6 +98,7 @@ void main() {
       tester,
     ) async {
       await _pumpApp(tester);
+      await logIn(tester);
       await _openFromCard(tester);
       await _openFromDrawer(tester, 'Add Project');
       await _openFromDrawer(tester, 'Add Education');
