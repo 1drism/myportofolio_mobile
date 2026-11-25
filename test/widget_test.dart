@@ -53,12 +53,12 @@ void main() {
 
     await tester.tap(find.text('View Skills'));
     await tester.pump();
-    await tester.ensureVisible(find.text('Logout'));
-    await tester.tap(find.text('Logout'));
+    await tester.ensureVisible(find.text('Contact Me'));
+    await tester.tap(find.text('Contact Me'));
     await tester.pumpAndSettle();
 
     expect(find.byType(SnackBar), findsOneWidget);
-    expect(find.text('You pressed the Logout button!'), findsOneWidget);
+    expect(find.text('You pressed the Contact Me button!'), findsOneWidget);
     expect(find.text('You pressed the View Skills button!'), findsNothing);
   });
 

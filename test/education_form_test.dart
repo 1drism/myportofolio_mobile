@@ -98,6 +98,7 @@ void main() {
       tester,
     ) async {
       await _pumpApp(tester);
+      await logIn(tester);
       await _openFromCard(tester);
       await _openFromDrawer(tester, 'Add Project');
       await _openFromDrawer(tester, 'Add Education');

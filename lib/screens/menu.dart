@@ -3,8 +3,10 @@ import 'package:myportofolio_mobile/app_colors.dart';
 import 'package:myportofolio_mobile/screens/education_form.dart';
 import 'package:myportofolio_mobile/screens/project_form.dart';
 import 'package:myportofolio_mobile/screens/project_list_screen.dart';
+import 'package:myportofolio_mobile/services/auth_state.dart';
 import 'package:myportofolio_mobile/widgets/left_drawer.dart';
 import 'package:myportofolio_mobile/widgets/project_card.dart';
+import 'package:provider/provider.dart';
 
 const double _pagePadding = 16.0;
 const double _sectionSpacing = 16.0;
@@ -32,6 +34,7 @@ class MyHomePage extends StatelessWidget {
       Icons.add_circle,
       AppColors.accent,
       page: (_) => const ProjectFormPage(),
+      requiresLogin: true,
     ),
     ItemHomepage("View Skills", Icons.code, AppColors.purple),
     ItemHomepage("View Education", Icons.school, AppColors.green),
@@ -42,7 +45,7 @@ class MyHomePage extends StatelessWidget {
       page: (_) => const EducationFormPage(),
     ),
     ItemHomepage("Contact Me", Icons.mail, AppColors.orange),
-    ItemHomepage("Logout", Icons.logout, AppColors.danger),
+    ItemHomepage("Logout", Icons.logout, AppColors.danger, action: _logout),
   ];
 
   @override
@@ -156,6 +159,23 @@ class InfoCard extends StatelessWidget {
   }
 }
 
+/// Logs out when logged in and reports the result in a SnackBar.
+Future<void> _logout(BuildContext context) async {
+  final auth = context.read<AuthState>();
+  final wasLoggedIn = auth.isLoggedIn;
+  await auth.logout();
+  if (!context.mounted) return;
+  ScaffoldMessenger.of(context)
+    ..hideCurrentSnackBar()
+    ..showSnackBar(
+      SnackBar(
+        content: Text(
+          wasLoggedIn ? 'You have been logged out.' : 'You are not logged in.',
+        ),
+      ),
+    );
+}
+
 /// Data for one action button: its label, icon, color, and optional page.
 class ItemHomepage {
   final String name;
@@ -165,5 +185,18 @@ class ItemHomepage {
   /// Page opened with [Navigator.push]; null shows a SnackBar instead.
   final WidgetBuilder? page;
 
-  ItemHomepage(this.name, this.icon, this.color, {this.page});
+  /// Whether [page] needs a logged-in user (see `ensureLoggedIn`).
+  final bool requiresLogin;
+
+  /// Custom tap handler used instead of [page], e.g. for Logout.
+  final Future<void> Function(BuildContext context)? action;
+
+  ItemHomepage(
+    this.name,
+    this.icon,
+    this.color, {
+    this.page,
+    this.requiresLogin = false,
+    this.action,
+  });
 }

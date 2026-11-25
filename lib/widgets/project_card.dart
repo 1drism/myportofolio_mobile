@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/app_colors.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
+import 'package:myportofolio_mobile/widgets/auth_guard.dart';
 
 const double _cardRadius = 12.0;
 const double _itemIconSize = 30.0;
@@ -24,9 +25,16 @@ class ItemCard extends StatelessWidget {
       borderRadius: borderRadius,
       child: InkWell(
         borderRadius: borderRadius,
-        onTap: () {
+        onTap: () async {
+          final action = item.action;
+          if (action != null) {
+            await action(context);
+            return;
+          }
           final page = item.page;
           if (page != null) {
+            if (item.requiresLogin && !await ensureLoggedIn(context)) return;
+            if (!context.mounted) return;
             Navigator.push(context, MaterialPageRoute(builder: page));
             return;
           }
