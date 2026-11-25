@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:myportofolio_mobile/app_colors.dart';
 import 'package:myportofolio_mobile/screens/menu.dart';
 import 'package:myportofolio_mobile/services/api_client.dart';
+import 'package:myportofolio_mobile/services/auth_state.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -26,8 +27,12 @@ class MyApp extends StatelessWidget {
       borderSide: BorderSide(color: color),
     );
 
-    return Provider<ApiClient>.value(
-      value: apiClient,
+    // MultiProvider injects the shared ApiClient and AuthState into the tree.
+    return MultiProvider(
+      providers: [
+        Provider.value(value: apiClient),
+        ChangeNotifierProvider(create: (_) => AuthState(apiClient)),
+      ],
       child: MaterialApp(
         title: 'MyPortfolio',
         theme: ThemeData(
